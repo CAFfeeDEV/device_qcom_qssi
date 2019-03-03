@@ -67,6 +67,7 @@ KERNEL_LLVM_SUPPORT := true
 #Enable sd-llvm suppport for kernel
 KERNEL_SD_LLVM_SUPPORT := true
 
+TARGET_USES_NQ_NFC := true
 
 # default is nosdcard, S/W button enabled in resource
 PRODUCT_CHARACTERISTICS := nosdcard
@@ -94,10 +95,6 @@ ifneq ($(TARGET_DISABLE_DASH), true)
     PRODUCT_BOOT_JARS += qcmediaplayer
 endif
 
-ifneq ($(strip $(QCPATH)),)
-    PRODUCT_BOOT_JARS += WfdCommon
-endif
-
 #Project is missing on sdm845, comment it for now
 #ifneq ($(strip $(QCPATH)),)
 #    PRODUCT_BOOT_JARS += libprotobuf-java_mls
@@ -113,31 +110,7 @@ PRODUCT_PACKAGES += android.hardware.media.omx@1.0-impl
 
 # Audio configuration file
 -include $(TOPDIR)hardware/qcom/audio/configs/msmnile/msmnile.mk
-
-#Audio DLKM
-AUDIO_DLKM := audio_apr.ko
-AUDIO_DLKM += audio_wglink.ko
-AUDIO_DLKM += audio_q6_pdr.ko
-AUDIO_DLKM += audio_q6_notifier.ko
-AUDIO_DLKM += audio_adsp_loader.ko
-AUDIO_DLKM += audio_q6.ko
-AUDIO_DLKM += audio_usf.ko
-AUDIO_DLKM += audio_pinctrl_wcd.ko
-AUDIO_DLKM += audio_swr.ko
-AUDIO_DLKM += audio_wcd_core.ko
-AUDIO_DLKM += audio_swr_ctrl.ko
-AUDIO_DLKM += audio_wsa881x.ko
-AUDIO_DLKM += audio_platform.ko
-AUDIO_DLKM += audio_hdmi.ko
-AUDIO_DLKM += audio_stub.ko
-AUDIO_DLKM += audio_wcd9xxx.ko
-AUDIO_DLKM += audio_mbhc.ko
-AUDIO_DLKM += audio_wcd9360.ko
-AUDIO_DLKM += audio_wcd_spi.ko
-AUDIO_DLKM += audio_native.ko
-AUDIO_DLKM += audio_machine_msmnile.ko
-AUDIO_DLKM += audio_wcd934x.ko
-PRODUCT_PACKAGES += $(AUDIO_DLKM)
+-include $(TOPDIR)vendor/qcom/opensource/audio-hal/primary-hal/configs/qssi/qssi.mk
 
 PRODUCT_PACKAGES += fs_config_files
 
@@ -164,7 +137,7 @@ PRODUCT_PACKAGES += \
 
 DEVICE_MATRIX_FILE   := device/qcom/common/compatibility_matrix.xml
 DEVICE_FRAMEWORK_MANIFEST_FILE := device/qcom/qssi/framework_manifest.xml
-DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := device/qcom/msmnile/vendor_framework_compatibility_matrix.xml
+DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := vendor/qcom/opensource/core-utils/vendor_framework_compatibility_matrix.xml
 
 
 #ANT+ stack
@@ -260,10 +233,6 @@ TARGET_MOUNT_POINTS_SYMLINKS := false
 ifeq ($(ENABLE_VENDOR_IMAGE), true)
  VENDOR_SECURITY_PATCH := 2018-06-05
 endif
-
-#Property to enable/disable scroll pre-obtain view
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.vendor.scroll.preobtain.enable := false
 
 TARGET_USES_MKE2FS := true
 
