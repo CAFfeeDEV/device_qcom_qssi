@@ -96,6 +96,32 @@ BOARD_VENDOR_KERNEL_MODULES := \
     $(KERNEL_MODULES_OUT)/mpq-dmx-hw-plugin.ko \
     $(KERNEL_MODULES_OUT)/tspp.ko
 
+ifeq ($(AUDIO_FEATURE_ENABLED_DLKM),true)
+BOARD_VENDOR_KERNEL_MODULES += \
+    $(KERNEL_MODULES_OUT)/audio_apr.ko \
+    $(KERNEL_MODULES_OUT)/audio_wglink.ko \
+    $(KERNEL_MODULES_OUT)/audio_q6_pdr.ko \
+    $(KERNEL_MODULES_OUT)/audio_q6_notifier.ko \
+    $(KERNEL_MODULES_OUT)/audio_adsp_loader.ko \
+    $(KERNEL_MODULES_OUT)/audio_q6.ko \
+    $(KERNEL_MODULES_OUT)/audio_usf.ko \
+    $(KERNEL_MODULES_OUT)/audio_pinctrl_wcd.ko \
+    $(KERNEL_MODULES_OUT)/audio_swr.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd_core.ko \
+    $(KERNEL_MODULES_OUT)/audio_swr_ctrl.ko \
+    $(KERNEL_MODULES_OUT)/audio_wsa881x.ko \
+    $(KERNEL_MODULES_OUT)/audio_platform.ko \
+    $(KERNEL_MODULES_OUT)/audio_hdmi.ko \
+    $(KERNEL_MODULES_OUT)/audio_stub.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd9xxx.ko \
+    $(KERNEL_MODULES_OUT)/audio_mbhc.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd934x.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd9360.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd_spi.ko \
+    $(KERNEL_MODULES_OUT)/audio_native.ko \
+    $(KERNEL_MODULES_OUT)/audio_machine_msmnile.ko
+endif
+
 TARGET_USES_ION := true
 TARGET_USES_NEW_ION_API :=true
 TARGET_USES_QCOM_BSP := false
@@ -110,7 +136,7 @@ BOARD_RAMDISK_OFFSET     := 0x02000000
 
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_HEADER_ARCH := arm64
-TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-android-
+TARGET_KERNEL_CROSS_COMPILE_PREFIX := $(shell pwd)/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-androidkernel-
 
 KERN_CONF_PATH := kernel/msm-4.14/arch/arm64/configs/vendor/
 KERN_CONF_FILE := $(shell ls $(KERN_CONF_PATH) | grep sm8..._defconfig)
@@ -141,6 +167,8 @@ TARGET_PD_SERVICE_ENABLED := true
 TARGET_PER_MGR_ENABLED := true
 
 # Enable dex pre-opt to speed up initial boot
+WITH_DEXPREOPT := false
+WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := true
 ifeq ($(HOST_OS),linux)
     ifeq ($(WITH_DEXPREOPT),)
       WITH_DEXPREOPT := true

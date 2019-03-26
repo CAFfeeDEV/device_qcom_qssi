@@ -40,7 +40,6 @@ QCOM_BOARD_PLATFORMS += $(MSMSTEPPE)
 
 QSD8K_BOARD_PLATFORMS := qsd8k
 
-TARGET_USE_VENDOR_CAMERA_EXT := true
 TARGET_USE_QTI_BT_STACK := true
 
 BOARD_HAVE_QCOM_FM ?= true
@@ -49,13 +48,13 @@ BOARD_HAVE_QCOM_FM ?= true
 # Boot additions
 #Android Telephony library
 PRODUCT_BOOT_JARS += qtiNetworkLib
-PRODUCT_BOOT_JARS += qti-telephony-utils
-PRODUCT_BOOT_JARS += ims-ext-common
 ifeq ($(strip $(TARGET_USES_NQ_NFC)),true)
 PRODUCT_BOOT_JARS += com.nxp.nfc.nq
 endif
 ifeq ($(strip $(BOARD_HAVE_QCOM_FM)),true)
+ifeq ($(TARGET_FWK_SUPPORTS_FULL_VALUEADDS),true)
 PRODUCT_BOOT_JARS += qcom.fmradio
+endif
 endif #BOARD_HAVE_QCOM_FM
 #Camera QC extends API
 #ifeq ($(strip $(TARGET_USES_QTIC_EXTENSION)),true)
@@ -81,11 +80,116 @@ MSM_VIDC_TARGET_LIST := msm8974 msm8610 msm8226 apq8084 msm8916 msm8994 msm8909 
 #List of targets that use master side content protection
 MASTER_SIDE_CP_TARGET_LIST := msm8996 msm8998 sdm660 sdm845 apq8098_latv sdm710 qcs605 msmnile $(MSMSTEPPE)
 
+# Below projects/packages with LOCAL_MODULEs will be used by
+# PRODUCT_PACKAGES to build LOCAL_MODULEs that are tagged with
+# optional tag, which will not be available on target unless
+# explicitly list here. Where project corresponds to the vars here
+# in CAPs.
+
+#ALSA
+ALSA_HARDWARE := alsa.msm8960
+ALSA_HARDWARE += alsa.msm8974
+ALSA_HARDWARE += alsa.msm8226
+ALSA_HARDWARE += alsa.msm8610
+ALSA_HARDWARE += alsa.apq8084
+
+ALSA_UCM := snd_soc_msm
+ALSA_UCM += snd_soc_msm_2x
+ALSA_UCM += snd_soc_msm_2x_mpq
+ALSA_UCM += snd_soc_msm_2x_Fusion3
+ALSA_UCM += snd_soc_msm_Sitar
+ALSA_UCM += snd_soc_msm_auxpcm
+ALSA_UCM += snd_soc_msm_2x_auxpcm
+ALSA_UCM += snd_soc_msm_2x_mpq_auxpcm
+ALSA_UCM += snd_soc_msm_2x_Fusion3_auxpcm
+ALSA_UCM += snd_soc_msm_Sitar_auxpcm
+ALSA_UCM += snd_soc_msm_Taiko
+ALSA_UCM += snd_soc_msm_Taiko_CDP
+ALSA_UCM += snd_soc_msm_Taiko_Fluid
+ALSA_UCM += snd_soc_msm_Taiko_liquid
+ALSA_UCM += snd_soc_apq_Taiko_DB
+ALSA_UCM += snd_soc_msm_I2SFusion
+ALSA_UCM += snd_soc_msm_Tapan
+ALSA_UCM += snd_soc_msm_TapanLite
+ALSA_UCM += snd_soc_msm_Tapan_SKUF
+ALSA_UCM += snd_soc_msm_TapanLite_SKUF
+ALSA_UCM += snd_soc_msm_8x10_wcd
+ALSA_UCM += snd_soc_msm_8x10_wcd_skuab
+ALSA_UCM += snd_soc_msm_8x10_wcd_skuaa
+ALSA_UCM += snd_soc_msm_samarium_Tapan
+
 #ANGLE
 ANGLE := libangle
 
 #APPOPS_POLICY
 APPOPS_POLICY := appops_policy.xml
+
+AUDIO_HARDWARE := audio.primary.mpq8064
+AUDIO_HARDWARE += audio.primary.apq8084
+AUDIO_HARDWARE += audio.primary.msm8960
+AUDIO_HARDWARE += audio.primary.msm8974
+AUDIO_HARDWARE += audio.primary.msm8226
+AUDIO_HARDWARE += audio.primary.msm8660
+AUDIO_HARDWARE += audio.primary.msm8610
+#AUDIO_HARDWARE += audio.primary.msm7627_surf
+AUDIO_HARDWARE += audio.primary.msm7627a
+AUDIO_HARDWARE += audio.primary.msm7630_surf
+AUDIO_HARDWARE += audio.primary.msm7630_fusion
+#AUDIO_HARDWARE += audio.primary.default
+AUDIO_HARDWARE += audio.a2dp.default
+AUDIO_HARDWARE += audio.usb.default
+AUDIO_HARDWARE += audio.r_submix.default
+AUDIO_HARDWARE += audio.primary.mpq8092
+AUDIO_HARDWARE += audio.primary.msm8916
+AUDIO_HARDWARE += audio.primary.msm8909
+AUDIO_HARDWARE += audio.primary.msm8994
+AUDIO_HARDWARE += audio.primary.msm8992
+AUDIO_HARDWARE += audio.primary.msm8996
+AUDIO_HARDWARE += audio.primary.msm8952
+AUDIO_HARDWARE += audio.primary.msm8937
+AUDIO_HARDWARE += audio.primary.msm8953
+AUDIO_HARDWARE += audio.primary.msmgold
+AUDIO_HARDWARE += audio.primary.msm8998
+AUDIO_HARDWARE += audio.primary.sdm660
+AUDIO_HARDWARE += audio.primary.sdm845
+AUDIO_HARDWARE += audio.primary.apq8098_latv
+AUDIO_HARDWARE += audio.primary.sdm710
+AUDIO_HARDWARE += audio.primary.qcs605
+AUDIO_HARDWARE += audio.primary.msmnile
+AUDIO_HARDWARE += audio.primary.$(MSMSTEPPE)
+#
+AUDIO_POLICY := audio_policy.mpq8064
+AUDIO_POLICY += audio_policy.apq8084
+AUDIO_POLICY += audio_policy.msm8960
+AUDIO_POLICY += audio_policy.msm8974
+AUDIO_POLICY += audio_policy.msm8226
+AUDIO_POLICY += audio_policy.msm8660
+AUDIO_POLICY += audio_policy.msm8610
+AUDIO_POLICY += audio_policy.mpq8092
+#AUDIO_POLICY += audio_policy.msm7627_surf
+AUDIO_POLICY += audio_policy.msm7627a
+AUDIO_POLICY += audio_policy.msm7630_surf
+AUDIO_POLICY += audio_policy.msm7630_fusion
+#AUDIO_POLICY += audio_policy.default
+AUDIO_POLICY += audio_policy.conf
+AUDIO_POLICY += audio_policy_8064.conf
+AUDIO_POLICY += audio_policy.msm8916
+AUDIO_POLICY += audio_policy.msm8909
+AUDIO_POLICY += audio_policy.msm8994
+AUDIO_POLICY += audio_policy.msm8992
+AUDIO_POLICY += audio_policy.msm8996
+AUDIO_POLICY += audio_policy.msm8952
+AUDIO_POLICY += audio_policy.msm8937
+AUDIO_POLICY += audio_policy.msm8953
+AUDIO_POLICY += audio_policy.msmgold
+
+#HAL Wrapper
+AUDIO_WRAPPER := libqahw
+AUDIO_WRAPPER += libqahwwrapper
+
+#HAL Test app
+AUDIO_HAL_TEST_APPS := hal_play_test
+AUDIO_HAL_TEST_APPS += hal_rec_test
 
 #tinyalsa test apps
 TINY_ALSA_TEST_APPS := tinyplay
@@ -193,6 +297,8 @@ GPS_HARDWARE += android.hardware.gnss@1.0-impl-qti
 GPS_HARDWARE += android.hardware.gnss@1.0-service-qti
 GPS_HARDWARE += android.hardware.gnss@1.1-impl-qti
 GPS_HARDWARE += android.hardware.gnss@1.1-service-qti
+GPS_HARDWARE += android.hardware.gnss@2.0-impl-qti
+GPS_HARDWARE += android.hardware.gnss@2.0-service-qti
 
 HIDL_WRAPPER := qti-telephony-hidl-wrapper
 HIDL_WRAPPER += qti_telephony_hidl_wrapper.xml
@@ -318,36 +424,6 @@ LIB_NL := libnl_2
 #LIB_XML2
 LIB_XML2 := libxml2
 
-#LIBCAMERA
-LIBCAMERA := camera.apq8084
-LIBCAMERA += camera.msm8974
-LIBCAMERA += camera.msm8226
-LIBCAMERA += camera.msm8610
-LIBCAMERA += camera.msm8960
-LIBCAMERA += camera.msm8660
-LIBCAMERA += camera.msm7630_surf
-LIBCAMERA += camera.msm7630_fusion
-LIBCAMERA += camera.msm7627a
-LIBCAMERA += camera.msm8909
-LIBCAMERA += camera.msm8916
-LIBCAMERA += camera.msm8994
-LIBCAMERA += camera.msm8992
-LIBCAMERA += camera.msm8996
-LIBCAMERA += camera.msm8998
-LIBCAMERA += camera.apq8098_latv
-LIBCAMERA += camera.sdm660
-LIBCAMERA += camera.msm8952
-LIBCAMERA += camera.msm8937
-LIBCAMERA += camera.msm8953
-LIBCAMERA += libcamera
-LIBCAMERA += libmmcamera_interface
-LIBCAMERA += libmmcamera_interface2
-LIBCAMERA += libmmjpeg_interface
-LIBCAMERA += libmmlib2d_interface
-LIBCAMERA += libqomx_core
-LIBCAMERA += mm-qcamera-app
-LIBCAMERA += camera_test
-LIBCAMERA += org.codeaurora.camera
 
 #LIBCOPYBIT
 LIBCOPYBIT := copybit.msm8660
@@ -584,13 +660,10 @@ MM_VIDEO += ExoplayerDemo
 MM_VIDEO += libaacwrapper
 
 # Codec2.0
-MM_VIDEO += libqcodec2
-MM_VIDEO += qcodec2_test
-MM_VIDEO += vendor.qti.media.c2@1.0-service
-MM_VIDEO += vendor.qti.media.c2@1.0-service.rc
-MM_VIDEO += media_codecs_c2.xml
+# vendor codec2 components are added in target-specific makefile
 MM_VIDEO += libmedia_codecserviceregistrant
 MM_VIDEO += libsfplugin_ccodec
+MM_VIDEO += com.android.media.swcodec
 
 #NQ_NFC
 NQ_NFC := NQNfcNci
@@ -799,12 +872,9 @@ PRODUCT_PACKAGES := \
     FM2 \
     FMRecord \
     SnapdragonGallery \
-    SnapdragonMusic \
     VideoEditor \
-    SnapdragonLauncher \
     a4wpservice \
     wipowerservice \
-    Mms \
     QtiDialer \
     qtiNetworkLib \
     TestApp5G
@@ -828,8 +898,14 @@ else
     DELAUN := Launcher3
 endif
 
+PRODUCT_PACKAGES += $(ALSA_HARDWARE)
+PRODUCT_PACKAGES += $(ALSA_UCM)
 PRODUCT_PACKAGES += $(ANGLE)
 PRODUCT_PACKAGES += $(APPOPS_POLICY)
+PRODUCT_PACKAGES += $(AUDIO_HARDWARE)
+PRODUCT_PACKAGES += $(AUDIO_POLICY)
+PRODUCT_PACKAGES += $(AUDIO_WRAPPER)
+PRODUCT_PACKAGES += $(AUDIO_HAL_TEST_APPS)
 PRODUCT_PACKAGES += $(TINY_ALSA_TEST_APPS)
 PRODUCT_PACKAGES += $(AMPLOADER)
 PRODUCT_PACKAGES += $(APPS)
@@ -867,7 +943,6 @@ PRODUCT_PACKAGES += $(KEYPAD)
 PRODUCT_PACKAGES += $(KS)
 PRODUCT_PACKAGES += $(LIB_NL)
 PRODUCT_PACKAGES += $(LIB_XML2)
-PRODUCT_PACKAGES += $(LIBCAMERA)
 PRODUCT_PACKAGES += $(LIBGESTURES)
 PRODUCT_PACKAGES += $(LIBCOPYBIT)
 PRODUCT_PACKAGES += $(LIBGRALLOC)
@@ -932,6 +1007,16 @@ PRODUCT_PACKAGES += android.hardware.drm@1.0-impl
 PRODUCT_PACKAGES += android.hardware.drm@1.0-service
 PRODUCT_PACKAGES += android.hardware.drm@1.1-service.widevine
 PRODUCT_PACKAGES += android.hardware.drm@1.1-service.clearkey
+
+# Don't use dynamic DRM HAL for non-go SPs
+ifneq ($(TARGET_HAS_LOW_RAM),true)
+PRODUCT_PACKAGES += android.hardware.drm@1.2-service.widevine
+PRODUCT_PACKAGES += android.hardware.drm@1.2-service.clearkey
+else
+PRODUCT_PACKAGES += android.hardware.drm@1.2-service-lazy.widevine
+PRODUCT_PACKAGES += android.hardware.drm@1.2-service-lazy.clearkey
+endif
+
 ifeq ($(strip $(OTA_FLAG_FOR_DRM)),true)
 PRODUCT_PACKAGES += move_widevine_data.sh
 endif
@@ -1133,3 +1218,6 @@ PRODUCT_PACKAGES += libvndfwk_detect_jni.qti
 PRODUCT_PACKAGES += libqti_vndfwk_detect
 PRODUCT_PACKAGES += libvndfwk_detect_jni.qti.vendor
 PRODUCT_PACKAGES += libqti_vndfwk_detect.vendor
+
+# TODO(b/124534788): Temporarily allow eng and debug LOCAL_MODULE_TAGS
+BUILD_BROKEN_ENG_DEBUG_TAGS := true

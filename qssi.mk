@@ -1,14 +1,22 @@
 # Enable AVB 2.0
 BOARD_AVB_ENABLE := true
 
+PRODUCT_SOONG_NAMESPACES += \
+    hardware/google/av \
+    hardware/google/interfaces
+
 # define flag to determine the kernel
 TARGET_KERNEL_VERSION := $(shell ls kernel | grep "msm-*" | sed 's/msm-//')
 
-# Set TARGET_USES_NEW_ION for 4.14 and higher kernels
+# Set flags for 4.14 and higher kernels
 ifeq ($(TARGET_KERNEL_VERSION),$(filter $(TARGET_KERNEL_VERSION),3.18 4.4 4.9))
 TARGET_USES_NEW_ION := false
 else
 TARGET_USES_NEW_ION := true
+#Enable llvm support for kernel
+KERNEL_LLVM_SUPPORT := true
+#Enable sd-llvm suppport for kernel
+KERNEL_SD_LLVM_SUPPORT := true
 endif
 
 KERNEL_DEFCONFIG := sdm845_defconfig
@@ -61,12 +69,6 @@ TARGET_USES_QCOM_BSP := false
 # RRO configuration
 TARGET_USES_RRO := true
 
-#Enable llvm support for kernel
-KERNEL_LLVM_SUPPORT := true
-
-#Enable sd-llvm suppport for kernel
-KERNEL_SD_LLVM_SUPPORT := true
-
 TARGET_USES_NQ_NFC := true
 
 # default is nosdcard, S/W button enabled in resource
@@ -77,7 +79,6 @@ BOARD_FRP_PARTITION_NAME := frp
 #Android EGL implementation
 PRODUCT_PACKAGES += libGLES_android
 
--include $(QCPATH)/common/config/qtic-config.mk
 -include hardware/qcom/display/config/msmnile.mk
 
 
@@ -89,7 +90,7 @@ PRODUCT_PACKAGES += telephony-ext
 TARGET_ENABLE_QC_AV_ENHANCEMENTS := false
 
 TARGET_DISABLE_DASH := true
-TARGET_DISABLE_QTI_VPP := false
+TARGET_DISABLE_QTI_VPP := true
 
 ifneq ($(TARGET_DISABLE_DASH), true)
     PRODUCT_BOOT_JARS += qcmediaplayer
@@ -109,8 +110,36 @@ endif #TARGET_ENABLE_QC_AV_ENHANCEMENTS
 PRODUCT_PACKAGES += android.hardware.media.omx@1.0-impl
 
 # Audio configuration file
--include $(TOPDIR)hardware/qcom/audio/configs/msmnile/msmnile.mk
 -include $(TOPDIR)vendor/qcom/opensource/audio-hal/primary-hal/configs/qssi/qssi.mk
+-include $(TOPDIR)hardware/qcom/audio/configs/msmnile/msmnile.mk
+AUDIO_FEATURE_ENABLED_SVA_MULTI_STAGE := true
+USE_CUSTOM_AUDIO_POLICY := 0
+USE_LIB_PROCESS_GROUP := true
+
+#Audio DLKM
+AUDIO_DLKM := audio_apr.ko
+AUDIO_DLKM += audio_wglink.ko
+AUDIO_DLKM += audio_q6_pdr.ko
+AUDIO_DLKM += audio_q6_notifier.ko
+AUDIO_DLKM += audio_adsp_loader.ko
+AUDIO_DLKM += audio_q6.ko
+AUDIO_DLKM += audio_usf.ko
+AUDIO_DLKM += audio_pinctrl_wcd.ko
+AUDIO_DLKM += audio_swr.ko
+AUDIO_DLKM += audio_wcd_core.ko
+AUDIO_DLKM += audio_swr_ctrl.ko
+AUDIO_DLKM += audio_wsa881x.ko
+AUDIO_DLKM += audio_platform.ko
+AUDIO_DLKM += audio_hdmi.ko
+AUDIO_DLKM += audio_stub.ko
+AUDIO_DLKM += audio_wcd9xxx.ko
+AUDIO_DLKM += audio_mbhc.ko
+AUDIO_DLKM += audio_wcd9360.ko
+AUDIO_DLKM += audio_wcd_spi.ko
+AUDIO_DLKM += audio_native.ko
+AUDIO_DLKM += audio_machine_msmnile.ko
+AUDIO_DLKM += audio_wcd934x.ko
+PRODUCT_PACKAGES += $(AUDIO_DLKM)
 
 PRODUCT_PACKAGES += fs_config_files
 
