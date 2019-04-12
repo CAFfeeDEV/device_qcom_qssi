@@ -24,8 +24,6 @@ ifeq ($(wildcard kernel/msm-$(TARGET_KERNEL_VERSION)/arch/arm64/configs/$(KERNEL
 KERNEL_DEFCONFIG := $(shell ls ./kernel/msm-$(TARGET_KERNEL_VERSION)/arch/arm64/configs/vendor | grep sm8..._defconfig)
 endif
 
-BUILD_BROKEN_PHONY_TARGETS := true
-BUILD_BROKEN_DUP_RULES := true
 TEMPORARY_DISABLE_PATH_RESTRICTIONS := true
 export TEMPORARY_DISABLE_PATH_RESTRICTIONS
 
@@ -78,9 +76,6 @@ BOARD_FRP_PARTITION_NAME := frp
 
 #Android EGL implementation
 PRODUCT_PACKAGES += libGLES_android
-
--include hardware/qcom/display/config/msmnile.mk
-
 
 PRODUCT_BOOT_JARS += tcmiface
 PRODUCT_BOOT_JARS += telephony-ext
@@ -149,9 +144,11 @@ PRODUCT_PACKAGES += update_engine \
     update_engine_client \
     update_verifier \
     bootctrl.msmnile \
-    brillo_update_payload \
     android.hardware.boot@1.0-impl \
     android.hardware.boot@1.0-service
+
+PRODUCT_HOST_PACKAGES += \
+    brillo_update_payload
 
 #Boot control HAL test app
 PRODUCT_PACKAGES_DEBUG += bootctl
