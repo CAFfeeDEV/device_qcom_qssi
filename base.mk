@@ -37,20 +37,17 @@ QCOM_BOARD_PLATFORMS += sdm710
 QCOM_BOARD_PLATFORMS += msmnile_au
 QCOM_BOARD_PLATFORMS += qcs605
 QCOM_BOARD_PLATFORMS += $(MSMSTEPPE)
+QCOM_BOARD_PLATFORMS += kona
 
 QSD8K_BOARD_PLATFORMS := qsd8k
 
+TARGET_USE_VENDOR_CAMERA_EXT := true
 TARGET_USE_QTI_BT_STACK := true
 
 BOARD_HAVE_QCOM_FM ?= true
 
 
 # Boot additions
-#Android Telephony library
-PRODUCT_BOOT_JARS += qtiNetworkLib
-ifeq ($(strip $(TARGET_USES_NQ_NFC)),true)
-PRODUCT_BOOT_JARS += com.nxp.nfc.nq
-endif
 ifeq ($(strip $(BOARD_HAVE_QCOM_FM)),true)
 ifeq ($(TARGET_FWK_SUPPORTS_FULL_VALUEADDS),true)
 PRODUCT_BOOT_JARS += qcom.fmradio
@@ -60,12 +57,6 @@ endif #BOARD_HAVE_QCOM_FM
 #ifeq ($(strip $(TARGET_USES_QTIC_EXTENSION)),true)
 #PRODUCT_BOOT_JARS += com.qualcomm.qti.camera
 #endif
-ifneq ($(strip $(TARGET_DISABLE_PERF_OPTIMIATIONS)),true)
-# Preloading QPerformance jar to ensure faster perflocks in Boost Framework
-PRODUCT_BOOT_JARS += QPerformance
-# Preloading UxPerformance jar to ensure faster UX invoke in Boost Framework
-PRODUCT_BOOT_JARS += UxPerformance
-endif
 
 #skip boot jars check
 SKIP_BOOT_JARS_CHECK := true
@@ -75,7 +66,7 @@ SKIP_BOOT_JARS_CHECK := true
 BOARD_CHARGER_ENABLE_SUSPEND := true
 
 #List of targets that use video hw
-MSM_VIDC_TARGET_LIST := msm8974 msm8610 msm8226 apq8084 msm8916 msm8994 msm8909 msm8992 msm8996 msm8952 msm8937 msm8953 msm8998 apq8098_latv sdm660 sdm845 sdm710 qcs605 msmnile $(MSMSTEPPE)
+MSM_VIDC_TARGET_LIST := msm8974 msm8610 msm8226 apq8084 msm8916 msm8994 msm8909 msm8992 msm8996 msm8952 msm8937 msm8953 msm8998 apq8098_latv sdm660 sdm845 sdm710 qcs605 msmnile $(MSMSTEPPE) kona
 
 #List of targets that use master side content protection
 MASTER_SIDE_CP_TARGET_LIST := msm8996 msm8998 sdm660 sdm845 apq8098_latv sdm710 qcs605 msmnile $(MSMSTEPPE)
@@ -157,6 +148,7 @@ AUDIO_HARDWARE += audio.primary.sdm710
 AUDIO_HARDWARE += audio.primary.qcs605
 AUDIO_HARDWARE += audio.primary.msmnile
 AUDIO_HARDWARE += audio.primary.$(MSMSTEPPE)
+AUDIO_HARDWARE += audio.primary.kona
 #
 AUDIO_POLICY := audio_policy.mpq8064
 AUDIO_POLICY += audio_policy.apq8084
@@ -356,6 +348,7 @@ INIT += ssr_setup
 INIT += enable_swap.sh
 INIT += init.mdm.sh
 INIT += fstab.qcom
+INIT += fstab.qti
 INIT += init.qcom.sensors.sh
 INIT += init.qcom.crashdata.sh
 INIT += init.qcom.vendor.rc
@@ -424,6 +417,36 @@ LIB_NL := libnl_2
 #LIB_XML2
 LIB_XML2 := libxml2
 
+#LIBCAMERA
+LIBCAMERA := camera.apq8084
+LIBCAMERA += camera.msm8974
+LIBCAMERA += camera.msm8226
+LIBCAMERA += camera.msm8610
+LIBCAMERA += camera.msm8960
+LIBCAMERA += camera.msm8660
+LIBCAMERA += camera.msm7630_surf
+LIBCAMERA += camera.msm7630_fusion
+LIBCAMERA += camera.msm7627a
+LIBCAMERA += camera.msm8909
+LIBCAMERA += camera.msm8916
+LIBCAMERA += camera.msm8994
+LIBCAMERA += camera.msm8992
+LIBCAMERA += camera.msm8996
+LIBCAMERA += camera.msm8998
+LIBCAMERA += camera.apq8098_latv
+LIBCAMERA += camera.sdm660
+LIBCAMERA += camera.msm8952
+LIBCAMERA += camera.msm8937
+LIBCAMERA += camera.msm8953
+LIBCAMERA += libcamera
+LIBCAMERA += libmmcamera_interface
+LIBCAMERA += libmmcamera_interface2
+LIBCAMERA += libmmjpeg_interface
+LIBCAMERA += libmmlib2d_interface
+LIBCAMERA += libqomx_core
+LIBCAMERA += mm-qcamera-app
+LIBCAMERA += camera_test
+LIBCAMERA += org.codeaurora.camera
 
 #LIBCOPYBIT
 LIBCOPYBIT := copybit.msm8660
@@ -484,6 +507,7 @@ LIBGRALLOC += gralloc.msm8937
 LIBGRALLOC += gralloc.msm8953
 LIBGRALLOC += gralloc.msm8998
 LIBGRALLOC += gralloc.msmnile
+LIBGRALLOC += gralloc.kona
 LIBGRALLOC += gralloc.sdm845
 LIBGRALLOC += gralloc.apq8098_latv
 LIBGRALLOC += libmemalloc
@@ -509,6 +533,7 @@ LIBMEMTRACK += memtrack.msm8937
 LIBMEMTRACK += memtrack.msm8953
 LIBMEMTRACK += memtrack.msm8998
 LIBMEMTRACK += memtrack.msmnile
+LIBMEMTRACK += memtrack.kona
 LIBMEMTRACK += memtrack.sdm660
 LIBMEMTRACK += memtrack.sdm845
 LIBMEMTRACK += memtrack.apq8098_latv
@@ -539,6 +564,7 @@ LIBLIGHTS += lights.msm8937
 LIBLIGHTS += lights.msm8953
 LIBLIGHTS += lights.msm8998
 LIBLIGHTS += lights.msmnile
+LIBLIGHTS += lights.kona
 LIBLIGHTS += lights.sdm660
 LIBLIGHTS += lights.sdm845
 LIBLIGHTS += lights.apq8098_latv
@@ -570,6 +596,7 @@ LIBHWCOMPOSER += hwcomposer.msm8937
 LIBHWCOMPOSER += hwcomposer.msm8953
 LIBHWCOMPOSER += hwcomposer.msm8998
 LIBHWCOMPOSER += hwcomposer.msmnile
+LIBHWCOMPOSER += hwcomposer.kona
 LIBHWCOMPOSER += hwcomposer.sdm660
 LIBHWCOMPOSER += hwcomposer.sdm845
 LIBHWCOMPOSER += hwcomposer.apq8098_latv
@@ -637,6 +664,7 @@ MM_CORE += libOmxCore
 
 #WFD
 MM_WFD := libwfdaac
+MM_WFD := libwfdaac_vendor
 
 
 #MM_VIDEO
@@ -664,33 +692,6 @@ MM_VIDEO += libaacwrapper
 MM_VIDEO += libmedia_codecserviceregistrant
 MM_VIDEO += libsfplugin_ccodec
 MM_VIDEO += com.android.media.swcodec
-
-#NQ_NFC
-NQ_NFC := NQNfcNci
-NQ_NFC += libnqnfc-nci
-NQ_NFC += libnqnfc_nci_jni
-NQ_NFC += libsn100nfc_nci_jni
-NQ_NFC += libsn100nfc-nci
-NQ_NFC += nfc_nci.nqx.default
-NQ_NFC += libp61-jcop-kit
-NQ_NFC += com.nxp.nfc.nq
-NQ_NFC += com.nxp.nfc.nq.xml
-NQ_NFC += com.gsma.services.nfc
-NQ_NFC += libpn547_fw.so
-NQ_NFC += libpn548ad_fw.so
-NQ_NFC += libnfc-brcm.conf
-NQ_NFC += libnfc-brcm_NCI2_0.conf
-NQ_NFC += libnfc-nci.conf
-NQ_NFC += libnfc-nci_NCI2_0.conf
-NQ_NFC += libnfc-nxp_default.conf
-NQ_NFC += nqnfcee_access.xml
-NQ_NFC += nqnfcse_access.xml
-NQ_NFC += Tag
-NQ_NFC += nqnfcinfo
-NQ_NFC += com.android.nfc_extras
-NQ_NFC += vendor.nxp.hardware.nfc@1.1-service
-NQ_NFC += nfc_nci.nqx.default.hw
-PRODUCT_PROPERTY_OVERRIDES += ro.hardware.nfc_nci=nqx.default
 
 #OPENCORE
 OPENCORE := libomx_aacdec_sharedlibrary
@@ -775,6 +776,7 @@ QRGND += qrngtest
 
 #WPA
 WPA := wpa_supplicant.conf
+WPA += wpa_cli
 WPA += wpa_supplicant_wcn.conf
 WPA += wpa_supplicant_ath6kl.conf
 WPA += wpa_supplicant
@@ -782,8 +784,8 @@ WPA += hs20-osu-client
 
 #ZLIB
 ZLIB := gzip
-ZLIB += minigzip
 ZLIB += libunz
+ZLIB_HOST := minigzip
 
 #Charger
 CHARGER := charger
@@ -840,11 +842,12 @@ WIGIG += libwigig_pciaccess
 #FD_LEAK
 FD_LEAK := libc_leak_detector
 
+TELEPHONY_DBG := NrNetworkSettingApp
+
 PRODUCT_PACKAGES := \
     AccountAndSyncSettings \
     DeskClock \
     AlarmProvider \
-    HidTestApp \
     Calculator \
     Calendar \
     Camera \
@@ -872,12 +875,13 @@ PRODUCT_PACKAGES := \
     FM2 \
     FMRecord \
     SnapdragonGallery \
+    SnapdragonMusic \
     VideoEditor \
+    SnapdragonLauncher \
     a4wpservice \
     wipowerservice \
-    QtiDialer \
-    qtiNetworkLib \
-    TestApp5G
+    Mms \
+    QtiDialer
 
 ifneq ($(BOARD_HAVE_BLUETOOTH),false)
 PRODUCT_PACKAGES += \
@@ -943,6 +947,7 @@ PRODUCT_PACKAGES += $(KEYPAD)
 PRODUCT_PACKAGES += $(KS)
 PRODUCT_PACKAGES += $(LIB_NL)
 PRODUCT_PACKAGES += $(LIB_XML2)
+PRODUCT_PACKAGES += $(LIBCAMERA)
 PRODUCT_PACKAGES += $(LIBGESTURES)
 PRODUCT_PACKAGES += $(LIBCOPYBIT)
 PRODUCT_PACKAGES += $(LIBGRALLOC)
@@ -965,9 +970,6 @@ PRODUCT_PACKAGES += $(MM_AUDIO)
 PRODUCT_PACKAGES += $(MM_CORE)
 PRODUCT_PACKAGES += $(MM_WFD)
 PRODUCT_PACKAGES += $(MM_VIDEO)
-ifeq ($(strip $(TARGET_USES_NQ_NFC)),true)
-PRODUCT_PACKAGES += $(NQ_NFC)
-endif
 ifeq ($(strip $(BOARD_HAVE_QCOM_FM)),true)
 # system prop for fm
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -990,6 +992,7 @@ PRODUCT_PACKAGES += $(QRGND)
 PRODUCT_PACKAGES += $(UPDATER)
 PRODUCT_PACKAGES += $(WPA)
 PRODUCT_PACKAGES += $(ZLIB)
+PRODUCT_HOST_PACKAGES += $(ZLIB_HOST)
 PRODUCT_PACKAGES += $(VT_JNI)
 PRODUCT_PACKAGES += $(VT_QTI_PERMISSIONS)
 PRODUCT_PACKAGES += $(IMS_SETTINGS)
@@ -1053,6 +1056,8 @@ PRODUCT_PACKAGES_DEBUG += init.qcom.debug.sh
 
 #NANOPB_LIBRARY_NAME := libnanopb-c-2.8.0
 
+PRODUCT_PACKAGES_DEBUG += $(TELEPHONY_DBG)
+
 PRODUCT_COPY_FILES := \
     frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.flash-autofocus.xml \
     frameworks/native/data/etc/android.hardware.camera.front.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.front.xml \
@@ -1114,15 +1119,6 @@ PRODUCT_COPY_FILES += \
 ifneq ($(TARGET_ENABLE_QC_AV_ENHANCEMENTS),true)
 PRODUCT_COPY_FILES += \
     device/qcom/common/media/media_codecs.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs.xml
-endif
-
-ifeq ($(strip $(TARGET_USES_NQ_NFC)),true)
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/com.nxp.mifare.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/com.nxp.mifare.xml \
-    frameworks/native/data/etc/com.android.nfc_extras.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/com.android.nfc_extras.xml \
-    frameworks/native/data/etc/android.hardware.nfc.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.xml \
-    frameworks/native/data/etc/android.hardware.nfc.hce.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.hce.xml \
-    frameworks/native/data/etc/android.hardware.nfc.hcef.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.hcef.xml
 endif
 
 ifneq ($(TARGET_NOT_SUPPORT_VULKAN),true)
@@ -1218,6 +1214,3 @@ PRODUCT_PACKAGES += libvndfwk_detect_jni.qti
 PRODUCT_PACKAGES += libqti_vndfwk_detect
 PRODUCT_PACKAGES += libvndfwk_detect_jni.qti.vendor
 PRODUCT_PACKAGES += libqti_vndfwk_detect.vendor
-
-# TODO(b/124534788): Temporarily allow eng and debug LOCAL_MODULE_TAGS
-BUILD_BROKEN_ENG_DEBUG_TAGS := true
