@@ -46,11 +46,6 @@ BOARD_HAVE_QCOM_FM ?= true
 
 
 # Boot additions
-#Android Telephony library
-PRODUCT_BOOT_JARS += qtiNetworkLib
-ifeq ($(strip $(TARGET_USES_NQ_NFC)),true)
-PRODUCT_BOOT_JARS += com.nxp.nfc.nq
-endif
 ifeq ($(strip $(BOARD_HAVE_QCOM_FM)),true)
 ifeq ($(TARGET_FWK_SUPPORTS_FULL_VALUEADDS),true)
 PRODUCT_BOOT_JARS += qcom.fmradio
@@ -60,12 +55,6 @@ endif #BOARD_HAVE_QCOM_FM
 #ifeq ($(strip $(TARGET_USES_QTIC_EXTENSION)),true)
 #PRODUCT_BOOT_JARS += com.qualcomm.qti.camera
 #endif
-ifneq ($(strip $(TARGET_DISABLE_PERF_OPTIMIATIONS)),true)
-# Preloading QPerformance jar to ensure faster perflocks in Boost Framework
-PRODUCT_BOOT_JARS += QPerformance
-# Preloading UxPerformance jar to ensure faster UX invoke in Boost Framework
-PRODUCT_BOOT_JARS += UxPerformance
-endif
 
 #skip boot jars check
 SKIP_BOOT_JARS_CHECK := true
@@ -593,9 +582,6 @@ LIBOVERLAY += overlay.default
 #LIBGENLOCK
 LIBGENLOCK := libgenlock
 
-#LIBPERFLOCK
-LIBPERFLOCK := org.codeaurora.Performance
-
 #LIBQCOMUI
 LIBQCOMUI := libQcomUI
 
@@ -664,33 +650,6 @@ MM_VIDEO += libaacwrapper
 MM_VIDEO += libmedia_codecserviceregistrant
 MM_VIDEO += libsfplugin_ccodec
 MM_VIDEO += com.android.media.swcodec
-
-#NQ_NFC
-NQ_NFC := NQNfcNci
-NQ_NFC += libnqnfc-nci
-NQ_NFC += libnqnfc_nci_jni
-NQ_NFC += libsn100nfc_nci_jni
-NQ_NFC += libsn100nfc-nci
-NQ_NFC += nfc_nci.nqx.default
-NQ_NFC += libp61-jcop-kit
-NQ_NFC += com.nxp.nfc.nq
-NQ_NFC += com.nxp.nfc.nq.xml
-NQ_NFC += com.gsma.services.nfc
-NQ_NFC += libpn547_fw.so
-NQ_NFC += libpn548ad_fw.so
-NQ_NFC += libnfc-brcm.conf
-NQ_NFC += libnfc-brcm_NCI2_0.conf
-NQ_NFC += libnfc-nci.conf
-NQ_NFC += libnfc-nci_NCI2_0.conf
-NQ_NFC += libnfc-nxp_default.conf
-NQ_NFC += nqnfcee_access.xml
-NQ_NFC += nqnfcse_access.xml
-NQ_NFC += Tag
-NQ_NFC += nqnfcinfo
-NQ_NFC += com.android.nfc_extras
-NQ_NFC += vendor.nxp.hardware.nfc@1.1-service
-NQ_NFC += nfc_nci.nqx.default.hw
-PRODUCT_PROPERTY_OVERRIDES += ro.hardware.nfc_nci=nqx.default
 
 #OPENCORE
 OPENCORE := libomx_aacdec_sharedlibrary
@@ -844,7 +803,6 @@ PRODUCT_PACKAGES := \
     AccountAndSyncSettings \
     DeskClock \
     AlarmProvider \
-    HidTestApp \
     Calculator \
     Calendar \
     Camera \
@@ -875,9 +833,7 @@ PRODUCT_PACKAGES := \
     VideoEditor \
     a4wpservice \
     wipowerservice \
-    QtiDialer \
-    qtiNetworkLib \
-    TestApp5G
+    QtiDialer
 
 ifneq ($(BOARD_HAVE_BLUETOOTH),false)
 PRODUCT_PACKAGES += \
@@ -965,9 +921,6 @@ PRODUCT_PACKAGES += $(MM_AUDIO)
 PRODUCT_PACKAGES += $(MM_CORE)
 PRODUCT_PACKAGES += $(MM_WFD)
 PRODUCT_PACKAGES += $(MM_VIDEO)
-ifeq ($(strip $(TARGET_USES_NQ_NFC)),true)
-PRODUCT_PACKAGES += $(NQ_NFC)
-endif
 ifeq ($(strip $(BOARD_HAVE_QCOM_FM)),true)
 # system prop for fm
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -1116,15 +1069,6 @@ PRODUCT_COPY_FILES += \
     device/qcom/common/media/media_codecs.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs.xml
 endif
 
-ifeq ($(strip $(TARGET_USES_NQ_NFC)),true)
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/com.nxp.mifare.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/com.nxp.mifare.xml \
-    frameworks/native/data/etc/com.android.nfc_extras.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/com.android.nfc_extras.xml \
-    frameworks/native/data/etc/android.hardware.nfc.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.xml \
-    frameworks/native/data/etc/android.hardware.nfc.hce.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.hce.xml \
-    frameworks/native/data/etc/android.hardware.nfc.hcef.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.hcef.xml
-endif
-
 ifneq ($(TARGET_NOT_SUPPORT_VULKAN),true)
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.vulkan.level-1.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.vulkan.level-1.xml \
@@ -1218,6 +1162,3 @@ PRODUCT_PACKAGES += libvndfwk_detect_jni.qti
 PRODUCT_PACKAGES += libqti_vndfwk_detect
 PRODUCT_PACKAGES += libvndfwk_detect_jni.qti.vendor
 PRODUCT_PACKAGES += libqti_vndfwk_detect.vendor
-
-# TODO(b/124534788): Temporarily allow eng and debug LOCAL_MODULE_TAGS
-BUILD_BROKEN_ENG_DEBUG_TAGS := true
