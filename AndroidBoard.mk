@@ -2,14 +2,13 @@ LOCAL_PATH := $(call my-dir)
 
 #----------------------------------------------------------------------
 # Host compiler configs
-# #---------------------------------------------------------------------
+#----------------------------------------------------------------------
 SOURCE_ROOT := $(shell pwd)
-
-TARGET_HOST_CC_OVERRIDE  := $(shell pwd)/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-gcc
-TARGET_HOST_CXX_OVERRIDE := $(shell pwd)/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-g++
-TARGET_HOST_AR_OVERRIDE  := $(shell pwd)/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-ar
-TARGET_HOST_LD_OVERRIDE  := $(shell pwd)/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-ld
-
+TARGET_HOST_COMPILER_PREFIX_OVERRIDE := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-
+TARGET_HOST_CC_OVERRIDE := $(TARGET_HOST_COMPILER_PREFIX_OVERRIDE)gcc
+TARGET_HOST_CXX_OVERRIDE := $(TARGET_HOST_COMPILER_PREFIX_OVERRIDE)g++
+TARGET_HOST_AR_OVERRIDE := $(TARGET_HOST_COMPILER_PREFIX_OVERRIDE)ar
+TARGET_HOST_LD_OVERRIDE := $(TARGET_HOST_COMPILER_PREFIX_OVERRIDE)ld
 
 #----------------------------------------------------------------------
 # Compile (L)ittle (K)ernel bootloader and the nandwrite utility
@@ -30,25 +29,20 @@ endif
 DTC := $(HOST_OUT_EXECUTABLES)/dtc$(HOST_EXECUTABLE_SUFFIX)
 UFDT_APPLY_OVERLAY := $(HOST_OUT_EXECUTABLES)/ufdt_apply_overlay$(HOST_EXECUTABLE_SUFFIX)
 
-
-
-# ../../ prepended to paths because kernel is at ./kernel/msm-x.x
-
-
-PWD := $(shell pwd)
-TARGET_KERNEL_MAKE_ENV := DTC_EXT=dtc$(HOST_EXECUTABLE_SUFFIX)
-TARGET_KERNEL_MAKE_ENV += DTC_OVERLAY_TEST_EXT=$(PWD)/$(UFDT_APPLY_OVERLAY)
+TARGET_KERNEL_MAKE_ENV := DTC_EXT=$(SOURCE_ROOT)/$(DTC)
+TARGET_KERNEL_MAKE_ENV += DTC_OVERLAY_TEST_EXT=$(SOURCE_ROOT)/$(UFDT_APPLY_OVERLAY)
 TARGET_KERNEL_MAKE_ENV += CONFIG_BUILD_ARM64_DT_OVERLAY=y
-TARGET_KERNEL_MAKE_ENV += HOSTCC=$(TARGET_HOST_CC_OVERRIDE)
-TARGET_KERNEL_MAKE_ENV += HOSTAR=$(TARGET_HOST_AR_OVERRIDE)
-TARGET_KERNEL_MAKE_ENV += HOSTLD=$(TARGET_HOST_LD_OVERRIDE)
+TARGET_KERNEL_MAKE_ENV += HOSTCC=$(SOURCE_ROOT)/$(TARGET_HOST_CC_OVERRIDE)
+TARGET_KERNEL_MAKE_ENV += HOSTAR=$(SOURCE_ROOT)/$(TARGET_HOST_AR_OVERRIDE)
+TARGET_KERNEL_MAKE_ENV += HOSTLD=$(SOURCE_ROOT)/$(TARGET_HOST_LD_OVERRIDE)
 ifeq ($(TARGET_USES_NEW_ION), false)
 TARGET_KERNEL_MAKE_ENV += HOSTCFLAGS="-I/usr/include -I/usr/include/x86_64-linux-gnu -L/usr/lib -L/usr/lib/x86_64-linux-gnu"
 else
-TARGET_KERNEL_MAKE_ENV += HOSTCFLAGS="-I$(shell pwd)/kernel/msm-4.14/include/uapi -I/usr/include -I/usr/include/x86_64-linux-gnu -L/usr/lib -L/usr/lib/x86_64-linux-gnu"
+TARGET_KERNEL_MAKE_ENV += HOSTCFLAGS="-I$(SOURCE_ROOT)/kernel/msm-$(TARGET_KERNEL_VERSION)/include/uapi -I/usr/include -I/usr/include/x86_64-linux-gnu -L/usr/lib -L/usr/lib/x86_64-linux-gnu"
 endif
 TARGET_KERNEL_MAKE_ENV += HOSTLDFLAGS="-L/usr/lib -L/usr/lib/x86_64-linux-gnu"
-KERNEL_LLVM_BIN := $(lastword $(sort $(wildcard $(shell pwd)/$(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/clang-4*)))/bin/clang
+
+KERNEL_LLVM_BIN := $(lastword $(sort $(wildcard $(SOURCE_ROOT)/$(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/clang-4*)))/bin/clang
 
 
 $(warning Kernel source tree path is: $(TARGET_KERNEL_SOURCE))
@@ -65,7 +59,7 @@ $(INSTALLED_KERNEL_TARGET): $(TARGET_PREBUILT_KERNEL) | $(ACP)
 #----------------------------------------------------------------------
 include $(CLEAR_VARS)
 LOCAL_MODULE       := vold.fstab
-LOCAL_MODULE_TAGS  := optional eng
+LOCAL_MODULE_TAGS  := optional
 LOCAL_MODULE_CLASS := ETC
 LOCAL_SRC_FILES    := $(LOCAL_MODULE)
 include $(BUILD_PREBUILT)
@@ -73,11 +67,29 @@ include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE       := gpio-keys.kl
-LOCAL_MODULE_TAGS  := optional eng
+LOCAL_MODULE_TAGS  := optional
 LOCAL_MODULE_CLASS := ETC
 LOCAL_SRC_FILES    := $(LOCAL_MODULE)
 LOCAL_MODULE_PATH  := $(TARGET_OUT_KEYLAYOUT)
 include $(BUILD_PREBUILT)
+
+# QSSI merge config files
+ifeq ($(ENABLE_AB), true)
+    # Handle Case for QSSI-Dynamic Partition
+    ifeq ($(BOARD_DYNAMIC_PARTITION_ENABLE), true)
+        $(call dist-for-goals,droidcore,$(LOCAL_PATH)/ota_merge_configs/dynamic_partition/ab/merge_config_system_misc_info_keys)
+        $(call dist-for-goals,droidcore,$(LOCAL_PATH)/ota_merge_configs/dynamic_partition/ab/merge_config_other_item_list)
+        $(call dist-for-goals,droidcore,$(LOCAL_PATH)/ota_merge_configs/dynamic_partition/ab/merge_config_system_item_list)
+    else
+        $(call dist-for-goals,droidcore,$(LOCAL_PATH)/ota_merge_configs/without_dynamic_partition/ab/merge_config_system_misc_info_keys)
+        $(call dist-for-goals,droidcore,$(LOCAL_PATH)/ota_merge_configs/without_dynamic_partition/ab/merge_config_other_item_list)
+        $(call dist-for-goals,droidcore,$(LOCAL_PATH)/ota_merge_configs/without_dynamic_partition/ab/merge_config_system_item_list)
+    endif
+else
+$(call dist-for-goals,droidcore,$(LOCAL_PATH)/ota_merge_configs/without_dynamic_partition/non_ab/merge_config_system_item_list)
+$(call dist-for-goals,droidcore,$(LOCAL_PATH)/ota_merge_configs/without_dynamic_partition/non_ab/merge_config_other_item_list)
+$(call dist-for-goals,droidcore,$(LOCAL_PATH)/ota_merge_configs/without_dynamic_partition/non_ab/merge_config_system_misc_info_keys)
+endif
 
 #----------------------------------------------------------------------
 # Radio image
@@ -94,15 +106,6 @@ endif
 #----------------------------------------------------------------------
 ifeq ($(TARGET_PRODUCT),qssi)
 include device/qcom/common/generate_extra_images.mk
-endif
-
-#----------------------------------------------------------------------
-# wlan specific
-#----------------------------------------------------------------------
-ifeq ($(TARGET_PRODUCT),qssi)
-ifeq ($(strip $(BOARD_HAS_QCOM_WLAN)),true)
-include device/qcom/wlan/msmnile/AndroidBoardWlan.mk
-endif
 endif
 
 #create firmware directory for qssi
