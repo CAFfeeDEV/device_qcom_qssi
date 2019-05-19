@@ -37,20 +37,15 @@ QCOM_BOARD_PLATFORMS += sdm710
 QCOM_BOARD_PLATFORMS += msmnile_au
 QCOM_BOARD_PLATFORMS += qcs605
 QCOM_BOARD_PLATFORMS += $(MSMSTEPPE)
+QCOM_BOARD_PLATFORMS += kona
 
 QSD8K_BOARD_PLATFORMS := qsd8k
 
+TARGET_USE_VENDOR_CAMERA_EXT := true
 TARGET_USE_QTI_BT_STACK := true
 
 BOARD_HAVE_QCOM_FM ?= true
 
-
-# Boot additions
-ifeq ($(strip $(BOARD_HAVE_QCOM_FM)),true)
-ifeq ($(TARGET_FWK_SUPPORTS_FULL_VALUEADDS),true)
-PRODUCT_BOOT_JARS += qcom.fmradio
-endif
-endif #BOARD_HAVE_QCOM_FM
 #Camera QC extends API
 #ifeq ($(strip $(TARGET_USES_QTIC_EXTENSION)),true)
 #PRODUCT_BOOT_JARS += com.qualcomm.qti.camera
@@ -64,7 +59,7 @@ SKIP_BOOT_JARS_CHECK := true
 BOARD_CHARGER_ENABLE_SUSPEND := true
 
 #List of targets that use video hw
-MSM_VIDC_TARGET_LIST := msm8974 msm8610 msm8226 apq8084 msm8916 msm8994 msm8909 msm8992 msm8996 msm8952 msm8937 msm8953 msm8998 apq8098_latv sdm660 sdm845 sdm710 qcs605 msmnile $(MSMSTEPPE)
+MSM_VIDC_TARGET_LIST := msm8974 msm8610 msm8226 apq8084 msm8916 msm8994 msm8909 msm8992 msm8996 msm8952 msm8937 msm8953 msm8998 apq8098_latv sdm660 sdm845 sdm710 qcs605 msmnile $(MSMSTEPPE) kona
 
 #List of targets that use master side content protection
 MASTER_SIDE_CP_TARGET_LIST := msm8996 msm8998 sdm660 sdm845 apq8098_latv sdm710 qcs605 msmnile $(MSMSTEPPE)
@@ -146,6 +141,7 @@ AUDIO_HARDWARE += audio.primary.sdm710
 AUDIO_HARDWARE += audio.primary.qcs605
 AUDIO_HARDWARE += audio.primary.msmnile
 AUDIO_HARDWARE += audio.primary.$(MSMSTEPPE)
+AUDIO_HARDWARE += audio.primary.kona
 #
 AUDIO_POLICY := audio_policy.mpq8064
 AUDIO_POLICY += audio_policy.apq8084
@@ -289,11 +285,6 @@ GPS_HARDWARE += android.hardware.gnss@1.1-service-qti
 GPS_HARDWARE += android.hardware.gnss@2.0-impl-qti
 GPS_HARDWARE += android.hardware.gnss@2.0-service-qti
 
-HIDL_WRAPPER := qti-telephony-hidl-wrapper
-HIDL_WRAPPER += qti_telephony_hidl_wrapper.xml
-
-QTI_TELEPHONY_UTILS := qti-telephony-utils
-QTI_TELEPHONY_UTILS += qti_telephony_utils.xml
 
 #HDMID
 HDMID := hdmid
@@ -333,7 +324,6 @@ INIT += init.qcom.class_core.sh
 INIT += init.class_main.sh
 INIT += init.qcom.wifi.sh
 INIT += vold.fstab
-INIT += init.qcom.ril.path.sh
 INIT += init.qcom.usb.rc
 INIT += init.msm.usb.configfs.rc
 INIT += init.qcom.usb.sh
@@ -345,6 +335,7 @@ INIT += ssr_setup
 INIT += enable_swap.sh
 INIT += init.mdm.sh
 INIT += fstab.qcom
+INIT += fstab.qti
 INIT += init.qcom.sensors.sh
 INIT += init.qcom.crashdata.sh
 INIT += init.qcom.vendor.rc
@@ -354,11 +345,6 @@ INIT += init.qti.fm.sh
 #IPROUTE2
 IPROUTE2 := ip
 IPROUTE2 += libiprouteutil
-
-#IPACM
-IPACM += ipacm
-IPACM += IPACM_cfg.xml
-IPACM += ipacm-diag
 
 #IPTABLES
 IPTABLES := libiptc
@@ -413,6 +399,36 @@ LIB_NL := libnl_2
 #LIB_XML2
 LIB_XML2 := libxml2
 
+#LIBCAMERA
+LIBCAMERA := camera.apq8084
+LIBCAMERA += camera.msm8974
+LIBCAMERA += camera.msm8226
+LIBCAMERA += camera.msm8610
+LIBCAMERA += camera.msm8960
+LIBCAMERA += camera.msm8660
+LIBCAMERA += camera.msm7630_surf
+LIBCAMERA += camera.msm7630_fusion
+LIBCAMERA += camera.msm7627a
+LIBCAMERA += camera.msm8909
+LIBCAMERA += camera.msm8916
+LIBCAMERA += camera.msm8994
+LIBCAMERA += camera.msm8992
+LIBCAMERA += camera.msm8996
+LIBCAMERA += camera.msm8998
+LIBCAMERA += camera.apq8098_latv
+LIBCAMERA += camera.sdm660
+LIBCAMERA += camera.msm8952
+LIBCAMERA += camera.msm8937
+LIBCAMERA += camera.msm8953
+LIBCAMERA += libcamera
+LIBCAMERA += libmmcamera_interface
+LIBCAMERA += libmmcamera_interface2
+LIBCAMERA += libmmjpeg_interface
+LIBCAMERA += libmmlib2d_interface
+LIBCAMERA += libqomx_core
+LIBCAMERA += mm-qcamera-app
+LIBCAMERA += camera_test
+LIBCAMERA += org.codeaurora.camera
 
 #LIBCOPYBIT
 LIBCOPYBIT := copybit.msm8660
@@ -473,6 +489,7 @@ LIBGRALLOC += gralloc.msm8937
 LIBGRALLOC += gralloc.msm8953
 LIBGRALLOC += gralloc.msm8998
 LIBGRALLOC += gralloc.msmnile
+LIBGRALLOC += gralloc.kona
 LIBGRALLOC += gralloc.sdm845
 LIBGRALLOC += gralloc.apq8098_latv
 LIBGRALLOC += libmemalloc
@@ -498,6 +515,7 @@ LIBMEMTRACK += memtrack.msm8937
 LIBMEMTRACK += memtrack.msm8953
 LIBMEMTRACK += memtrack.msm8998
 LIBMEMTRACK += memtrack.msmnile
+LIBMEMTRACK += memtrack.kona
 LIBMEMTRACK += memtrack.sdm660
 LIBMEMTRACK += memtrack.sdm845
 LIBMEMTRACK += memtrack.apq8098_latv
@@ -528,6 +546,7 @@ LIBLIGHTS += lights.msm8937
 LIBLIGHTS += lights.msm8953
 LIBLIGHTS += lights.msm8998
 LIBLIGHTS += lights.msmnile
+LIBLIGHTS += lights.kona
 LIBLIGHTS += lights.sdm660
 LIBLIGHTS += lights.sdm845
 LIBLIGHTS += lights.apq8098_latv
@@ -559,6 +578,7 @@ LIBHWCOMPOSER += hwcomposer.msm8937
 LIBHWCOMPOSER += hwcomposer.msm8953
 LIBHWCOMPOSER += hwcomposer.msm8998
 LIBHWCOMPOSER += hwcomposer.msmnile
+LIBHWCOMPOSER += hwcomposer.kona
 LIBHWCOMPOSER += hwcomposer.sdm660
 LIBHWCOMPOSER += hwcomposer.sdm845
 LIBHWCOMPOSER += hwcomposer.apq8098_latv
@@ -581,6 +601,9 @@ LIBOVERLAY += overlay.default
 
 #LIBGENLOCK
 LIBGENLOCK := libgenlock
+
+#LIBPERFLOCK
+LIBPERFLOCK := org.codeaurora.Performance
 
 #LIBQCOMUI
 LIBQCOMUI := libQcomUI
@@ -623,6 +646,7 @@ MM_CORE += libOmxCore
 
 #WFD
 MM_WFD := libwfdaac
+MM_WFD := libwfdaac_vendor
 
 
 #MM_VIDEO
@@ -693,8 +717,6 @@ SENSORS_HARDWARE += sensors.msm8996_auto
 SOFTAP := libQWiFiSoftApCfg
 SOFTAP += libqsap_sdk
 
-#STK
-STK := Stk
 
 #STM LOG
 STMLOG := libstm-log
@@ -734,6 +756,7 @@ QRGND += qrngtest
 
 #WPA
 WPA := wpa_supplicant.conf
+WPA += wpa_cli
 WPA += wpa_supplicant_wcn.conf
 WPA += wpa_supplicant_ath6kl.conf
 WPA += wpa_supplicant
@@ -741,8 +764,8 @@ WPA += hs20-osu-client
 
 #ZLIB
 ZLIB := gzip
-ZLIB += minigzip
 ZLIB += libunz
+ZLIB_HOST := minigzip
 
 #Charger
 CHARGER := charger
@@ -762,14 +785,6 @@ RCS += rcs_service_aidl_static
 RCS += rcs_service_api
 RCS += rcs_service_api.xml
 
-#IMS SETTINGS
-IMS_SETTINGS := imssettings
-
-#IMS Extension module for Android Telephony
-IMS_EXT := ims-ext-common
-IMS_EXT += ims_ext_common.xml
-IMS_EXT += ConfURIDialer
-
 #CRDA
 CRDA := crda
 CRDA += regdbdump
@@ -782,20 +797,6 @@ WLAN := prima_wlan.ko
 WLAN += pronto_wlan.ko
 WLAN += qca_cld_wlan.ko
 
-#FSTMAN
-FSTMAN := fstman
-FSTMAN += fstman.ini
-
-# WIGIG
-WIGIG := host_manager_11ad
-WIGIG += wigig_remoteserver
-WIGIG += wigig_wiburn
-WIGIG += wigig_logcollector
-WIGIG += wigig_logcollector.ini
-WIGIG += libwigig_utils
-WIGIG += libwigig_flashaccess
-WIGIG += libwigig_pciaccess
-
 #FD_LEAK
 FD_LEAK := libc_leak_detector
 
@@ -806,7 +807,6 @@ PRODUCT_PACKAGES := \
     Calculator \
     Calendar \
     Camera \
-    CellBroadcastReceiver \
     CertInstaller \
     DrmProvider \
     Email \
@@ -814,7 +814,6 @@ PRODUCT_PACKAGES := \
     LatinIME \
     Music \
     netutils-wrapper-1.0 \
-    Phone \
     Provision \
     Protips \
     QuickSearchBox \
@@ -826,14 +825,14 @@ PRODUCT_PACKAGES := \
     SyncProvider \
     SoundRecorder \
     IM \
-    VoiceDialer \
     FM2 \
     FMRecord \
     SnapdragonGallery \
+    SnapdragonMusic \
     VideoEditor \
+    SnapdragonLauncher \
     a4wpservice \
-    wipowerservice \
-    QtiDialer
+    wipowerservice
 
 ifneq ($(BOARD_HAVE_BLUETOOTH),false)
 PRODUCT_PACKAGES += \
@@ -888,7 +887,6 @@ PRODUCT_PACKAGES += $(FASTPOWERON)
 PRODUCT_PACKAGES += $(FM)
 PRODUCT_PACKAGES += $(GPS_HARDWARE)
 PRODUCT_PACKAGES += $(HDMID)
-PRODUCT_PACKAGES += $(HIDL_WRAPPER)
 PRODUCT_PACKAGES += $(HOSTAPD)
 PRODUCT_PACKAGES += $(I420CC)
 PRODUCT_PACKAGES += $(INIT)
@@ -899,6 +897,7 @@ PRODUCT_PACKAGES += $(KEYPAD)
 PRODUCT_PACKAGES += $(KS)
 PRODUCT_PACKAGES += $(LIB_NL)
 PRODUCT_PACKAGES += $(LIB_XML2)
+PRODUCT_PACKAGES += $(LIBCAMERA)
 PRODUCT_PACKAGES += $(LIBGESTURES)
 PRODUCT_PACKAGES += $(LIBCOPYBIT)
 PRODUCT_PACKAGES += $(LIBGRALLOC)
@@ -930,11 +929,9 @@ PRODUCT_PACKAGES += $(OPENCORE)
 PRODUCT_PACKAGES += $(PPP)
 PRODUCT_PACKAGES += $(PROTOBUF)
 PRODUCT_PACKAGES += $(PVOMX)
-PRODUCT_PACKAGES += $(QTI_TELEPHONY_UTILS)
 PRODUCT_PACKAGES += $(RF4CE)
 PRODUCT_PACKAGES += $(SENSORS_HARDWARE)
 #PRODUCT_PACKAGES += $(SOFTAP)
-PRODUCT_PACKAGES += $(STK)
 PRODUCT_PACKAGES += $(STMLOG)
 PRODUCT_PACKAGES += $(THERMAL_HAL)
 PRODUCT_PACKAGES += $(TSLIB_EXTERNAL)
@@ -943,16 +940,12 @@ PRODUCT_PACKAGES += $(QRGND)
 PRODUCT_PACKAGES += $(UPDATER)
 PRODUCT_PACKAGES += $(WPA)
 PRODUCT_PACKAGES += $(ZLIB)
+PRODUCT_HOST_PACKAGES += $(ZLIB_HOST)
 PRODUCT_PACKAGES += $(VT_JNI)
 PRODUCT_PACKAGES += $(VT_QTI_PERMISSIONS)
-PRODUCT_PACKAGES += $(IMS_SETTINGS)
 PRODUCT_PACKAGES += $(CRDA)
 PRODUCT_PACKAGES += $(WLAN)
-PRODUCT_PACKAGES += $(IPACM)
-PRODUCT_PACKAGES += $(FSTMAN)
-PRODUCT_PACKAGES += $(WIGIG)
 PRODUCT_PACKAGES += $(FD_LEAK)
-PRODUCT_PACKAGES += $(IMS_EXT)
 # Temp workarround for b/36603742
 PRODUCT_PACKAGES += android.hidl.manager@1.0-java
 
@@ -982,8 +975,6 @@ PRODUCT_PACKAGES += \
     make_ext4fs \
     setup_fs
 
-# Qcril configuration file
-PRODUCT_PACKAGES += qcril.db
 
 # MSM updater library
 PRODUCT_PACKAGES += librecovery_updater_msm
@@ -1011,8 +1002,6 @@ PRODUCT_COPY_FILES := \
     frameworks/native/data/etc/android.hardware.camera.front.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.front.xml \
     frameworks/native/data/etc/android.hardware.camera.full.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.full.xml\
     frameworks/native/data/etc/android.hardware.camera.raw.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.raw.xml\
-    frameworks/native/data/etc/android.hardware.telephony.gsm.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.gsm.xml \
-    frameworks/native/data/etc/android.hardware.telephony.cdma.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.cdma.xml \
     frameworks/native/data/etc/android.hardware.location.gps.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.location.gps.xml \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
     frameworks/native/data/etc/android.hardware.wifi.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.wifi.xml \
@@ -1124,9 +1113,6 @@ endif
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.oem_unlock_supported=1
 
-ifeq ($(TARGET_USES_QCOM_BSP_ATEL),true)
-    PRODUCT_PROPERTY_OVERRIDES += persist.radio.multisim.config=dsds
-endif
 
 # VNDK-SP:
 PRODUCT_PACKAGES += \
@@ -1153,6 +1139,17 @@ else
     PRODUCT_PROPERTY_OVERRIDES += \
         persist.vendor.qcomsysd.enabled=1
 endif
+
+PRODUCT_PACKAGES_DEBUG += \
+    init.qcom.debug.sh \
+    init.qcom.debug-sdm660.sh \
+    init.qcom.debug-sdm710.sh \
+    init.qti.debug-msmnile-apps.sh \
+    init.qti.debug-msmnile-modem.sh \
+    init.qti.debug-msmnile-slpi.sh \
+    init.qti.debug-talos.sh \
+    init.qti.debug-msmnile.sh \
+    init.qti.debug-kona.sh
 
 PRODUCT_PACKAGES += liboemaids_system
 PRODUCT_PACKAGES += liboemaids_vendor
