@@ -1,5 +1,46 @@
+#For QSSI, we build only the system image. Here we explicitly set the images
+#we build so there is no confusion.
+PRODUCT_BUILD_SYSTEM_IMAGE := true
+PRODUCT_BUILD_SYSTEM_OTHER_IMAGE := false
+PRODUCT_BUILD_VENDOR_IMAGE := false
+PRODUCT_BUILD_PRODUCT_IMAGE := false
+PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE := false
+PRODUCT_BUILD_ODM_IMAGE := false
+PRODUCT_BUILD_CACHE_IMAGE := false
+PRODUCT_BUILD_RAMDISK_IMAGE := true
+PRODUCT_BUILD_USERDATA_IMAGE := true
+
+#Also, there is no need to build an OTA package as this will be done later
+#when we combine this system build with the non-system images.
+TARGET_SKIP_OTA_PACKAGE := true
+
 # Enable AVB 2.0
 BOARD_AVB_ENABLE := true
+
+#### Dynamic Partition Handling
+
+####
+#### Turning this flag to TRUE will enable dynamic partition/super image creation.
+BOARD_DYNAMIC_PARTITION_ENABLE ?= false
+
+ifneq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
+# Enable chain partition for system, to facilitate system-only OTA in Treble.
+BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_SYSTEM_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_SYSTEM_ROLLBACK_INDEX := 0
+BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
+else
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
+# Disable building the SUPER partition in this build. SUPER should be built
+# after QSSI has been merged with the SoC build.
+PRODUCT_BUILD_SUPER_PARTITION := false
+BOARD_AVB_VBMETA_SYSTEM := system
+BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
+endif
+#### Dynamic Partition Handling
 
 PRODUCT_SOONG_NAMESPACES += \
     hardware/google/av \
@@ -31,12 +72,6 @@ VENDOR_QTI_DEVICE := qssi
 TARGET_USES_QSSI := true
 
 ENABLE_AB ?= true
-
-# Enable chain partition for system, to facilitate system-only OTA in Treble.
-BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_SYSTEM_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_SYSTEM_ROLLBACK_INDEX := 0
-BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
 
 TARGET_DEFINES_DALVIK_HEAP := true
 $(call inherit-product, device/qcom/qssi/common64.mk)
@@ -76,7 +111,6 @@ PRODUCT_PACKAGES += libGLES_android
 PRODUCT_BOOT_JARS += tcmiface
 PRODUCT_BOOT_JARS += telephony-ext
 PRODUCT_PACKAGES += telephony-ext
-
 
 TARGET_ENABLE_QC_AV_ENHANCEMENTS := false
 
@@ -209,7 +243,6 @@ DEVICE_PACKAGE_OVERLAYS += device/qcom/qssi/overlay
 endif
 
 
-ENABLE_VENDOR_RIL_SERVICE := true
 #Enable vndk-sp Libraries
 PRODUCT_PACKAGES += vndk_package
 
