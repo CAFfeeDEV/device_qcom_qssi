@@ -109,6 +109,9 @@ ANGLE := libangle
 #APPOPS_POLICY
 APPOPS_POLICY := appops_policy.xml
 
+#ATRACE_HAL
+ATRACE_HAL := android.hardware.atrace@1.0-service
+
 AUDIO_HARDWARE := audio.primary.mpq8064
 AUDIO_HARDWARE += audio.primary.apq8084
 AUDIO_HARDWARE += audio.primary.msm8960
@@ -858,6 +861,7 @@ PRODUCT_PACKAGES += $(ALSA_HARDWARE)
 PRODUCT_PACKAGES += $(ALSA_UCM)
 PRODUCT_PACKAGES += $(ANGLE)
 PRODUCT_PACKAGES += $(APPOPS_POLICY)
+PRODUCT_PACKAGES += $(ATRACE_HAL)
 PRODUCT_PACKAGES += $(AUDIO_HARDWARE)
 PRODUCT_PACKAGES += $(AUDIO_POLICY)
 PRODUCT_PACKAGES += $(AUDIO_WRAPPER)
@@ -1017,12 +1021,6 @@ PRODUCT_COPY_FILES := \
     frameworks/native/data/etc/android.hardware.bluetooth_le.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.bluetooth_le.xml \
     frameworks/native/data/etc/android.software.device_id_attestation.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.device_id_attestation.xml \
     frameworks/native/data/etc/android.software.verified_boot.xml:system/etc/permissions/android.software.verified_boot.xml
-
-# Enable TDES support when KM4 is enabled
-ifeq ($(ENABLE_KM_4_0), true)
-    PRODUCT_PROPERTY_OVERRIDES += \
-        ro.hardware.keystore_desede=true
-endif
 
 # Bluetooth configuration files
 #PRODUCT_COPY_FILES += \

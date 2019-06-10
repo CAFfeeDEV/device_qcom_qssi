@@ -9,6 +9,5 @@ avb_product_add_hashtree_footer_args
 avb_product_services_hashtree_enable
 avb_product_services_add_hashtree_footer_args
 root_dir
-ab_update
 default_system_dev_certificate
 product_fs_type
