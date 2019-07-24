@@ -40,6 +40,7 @@ QCOM_BOARD_PLATFORMS += $(MSMSTEPPE)
 QCOM_BOARD_PLATFORMS += $(TRINKET)
 QCOM_BOARD_PLATFORMS += kona
 QCOM_BOARD_PLATFORMS += atoll
+QCOM_BOARD_PLATFORMS += lito
 
 QSD8K_BOARD_PLATFORMS := qsd8k
 
@@ -61,7 +62,7 @@ SKIP_BOOT_JARS_CHECK := true
 BOARD_CHARGER_ENABLE_SUSPEND := true
 
 #List of targets that use video hw
-MSM_VIDC_TARGET_LIST := msm8974 msm8610 msm8226 apq8084 msm8916 msm8994 msm8909 msm8992 msm8996 msm8952 msm8937 msm8953 msm8998 apq8098_latv sdm660 sdm845 sdm710 qcs605 msmnile $(MSMSTEPPE) $(TRINKET) kona atoll
+MSM_VIDC_TARGET_LIST := msm8974 msm8610 msm8226 apq8084 msm8916 msm8994 msm8909 msm8992 msm8996 msm8952 msm8937 msm8953 msm8998 apq8098_latv sdm660 sdm845 sdm710 qcs605 msmnile $(MSMSTEPPE) $(TRINKET) kona atoll lito
 
 #List of targets that use master side content protection
 MASTER_SIDE_CP_TARGET_LIST := msm8996 msm8998 sdm660 sdm845 apq8098_latv sdm710 qcs605 msmnile $(MSMSTEPPE) $(TRINKET) atoll
@@ -148,6 +149,8 @@ AUDIO_HARDWARE += audio.primary.msmnile
 AUDIO_HARDWARE += audio.primary.$(MSMSTEPPE)
 AUDIO_HARDWARE += audio.primary.$(TRINKET)
 AUDIO_HARDWARE += audio.primary.kona
+AUDIO_HARDWARE += audio.primary.lito
+AUDIO_HARDWARE += audio.primary.atoll
 #
 AUDIO_POLICY := audio_policy.mpq8064
 AUDIO_POLICY += audio_policy.apq8084
@@ -274,23 +277,6 @@ FM += libfmjni
 FM += fm_helium
 FM += ftm_fm_lib
 FM += libfm-hci
-
-#GPS
-GPS_HARDWARE := gps.conf
-GPS_HARDWARE += gps.default
-GPS_HARDWARE += libgps.utils
-GPS_HARDWARE += libloc_api_v02
-GPS_HARDWARE += libloc_ds_api
-GPS_HARDWARE += libgnsspps
-GPS_HARDWARE += libgnss
-GPS_HARDWARE += liblocation_api
-GPS_HARDWARE += android.hardware.gnss@1.0-impl-qti
-GPS_HARDWARE += android.hardware.gnss@1.0-service-qti
-GPS_HARDWARE += android.hardware.gnss@1.1-impl-qti
-GPS_HARDWARE += android.hardware.gnss@1.1-service-qti
-GPS_HARDWARE += android.hardware.gnss@2.0-impl-qti
-GPS_HARDWARE += android.hardware.gnss@2.0-service-qti
-
 
 #HDMID
 HDMID := hdmid
@@ -497,6 +483,7 @@ LIBGRALLOC += gralloc.msm8953
 LIBGRALLOC += gralloc.msm8998
 LIBGRALLOC += gralloc.msmnile
 LIBGRALLOC += gralloc.kona
+LIBGRALLOC += gralloc.lito
 LIBGRALLOC += gralloc.sdm845
 LIBGRALLOC += gralloc.apq8098_latv
 LIBGRALLOC += libmemalloc
@@ -524,6 +511,7 @@ LIBMEMTRACK += memtrack.msm8953
 LIBMEMTRACK += memtrack.msm8998
 LIBMEMTRACK += memtrack.msmnile
 LIBMEMTRACK += memtrack.kona
+LIBMEMTRACK += memtrack.lito
 LIBMEMTRACK += memtrack.sdm660
 LIBMEMTRACK += memtrack.sdm845
 LIBMEMTRACK += memtrack.apq8098_latv
@@ -556,6 +544,7 @@ LIBLIGHTS += lights.msm8953
 LIBLIGHTS += lights.msm8998
 LIBLIGHTS += lights.msmnile
 LIBLIGHTS += lights.kona
+LIBLIGHTS += lights.lito
 LIBLIGHTS += lights.sdm660
 LIBLIGHTS += lights.sdm845
 LIBLIGHTS += lights.apq8098_latv
@@ -589,6 +578,7 @@ LIBHWCOMPOSER += hwcomposer.msm8953
 LIBHWCOMPOSER += hwcomposer.msm8998
 LIBHWCOMPOSER += hwcomposer.msmnile
 LIBHWCOMPOSER += hwcomposer.kona
+LIBHWCOMPOSER += hwcomposer.lito
 LIBHWCOMPOSER += hwcomposer.sdm660
 LIBHWCOMPOSER += hwcomposer.sdm845
 LIBHWCOMPOSER += hwcomposer.apq8098_latv
@@ -897,7 +887,6 @@ PRODUCT_PACKAGES += $(EBTABLES)
 PRODUCT_PACKAGES += $(EXTENDEDMEDIA_EXT)
 PRODUCT_PACKAGES += $(FASTPOWERON)
 PRODUCT_PACKAGES += $(FM)
-PRODUCT_PACKAGES += $(GPS_HARDWARE)
 PRODUCT_PACKAGES += $(HDMID)
 PRODUCT_PACKAGES += $(HOSTAPD)
 PRODUCT_PACKAGES += $(I420CC)
@@ -1155,7 +1144,9 @@ PRODUCT_PACKAGES_DEBUG += \
     init.qti.debug-msmnile-slpi.sh \
     init.qti.debug-talos.sh \
     init.qti.debug-msmnile.sh \
-    init.qti.debug-kona.sh
+    init.qti.debug-kona.sh \
+    init.qti.debug-lito.sh \
+    init.qti.debug-trinket.sh
 
 PRODUCT_PACKAGES += liboemaids_system
 PRODUCT_PACKAGES += liboemaids_vendor
