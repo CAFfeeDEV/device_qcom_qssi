@@ -18,8 +18,20 @@ BOARD_AVB_ENABLE := true
 #### Dynamic Partition Handling
 
 ####
-#### Turning this flag to TRUE will enable dynamic partition/super image creation.
-BOARD_DYNAMIC_PARTITION_ENABLE ?= false
+
+# Retain the earlier default behavior i.e. ota config (dynamic partition was disabled if not set explicitly), so set
+# SHIPPING_API_LEVEL to 28 if it was not set earlier (this is generally set earlier via build.sh per-target)
+SHIPPING_API_LEVEL ?= 28
+
+#### Turning BOARD_DYNAMIC_PARTITION_ENABLE flag to TRUE will enable dynamic partition/super image creation.
+# Enable Dynamic partitions only for Q new launch devices.
+ifeq ($(SHIPPING_API_LEVEL),29)
+  BOARD_DYNAMIC_PARTITION_ENABLE ?= true
+  PRODUCT_SHIPPING_API_LEVEL := 29
+else ifeq ($(SHIPPING_API_LEVEL),28)
+  BOARD_DYNAMIC_PARTITION_ENABLE ?= false
+  $(call inherit-product, build/make/target/product/product_launched_with_p.mk)
+endif
 
 ifneq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
 # Enable chain partition for system, to facilitate system-only OTA in Treble.
@@ -250,14 +262,6 @@ include device/qcom/wlan/msmnile/wlan.mk
 
 TARGET_MOUNT_POINTS_SYMLINKS := false
 
-# propery "ro.vendor.build.security_patch" is checked for
-# # CTS compliance so need to make sure its set with following
-# # format "YYYY-MM-DD" on production devices.
-# #
-ifeq ($(ENABLE_VENDOR_IMAGE), true)
- VENDOR_SECURITY_PATCH := 2018-06-05
-endif
-
 TARGET_USES_MKE2FS := true
 
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -271,9 +275,6 @@ AUDIO_FEATURE_ENABLED_DLKM := true
 else
 AUDIO_FEATURE_ENABLED_DLKM := false
 endif
-
-$(call inherit-product, build/make/target/product/product_launched_with_p.mk)
-
 
 ###################################################################################
 # This is the End of target.mk file.
