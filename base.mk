@@ -41,6 +41,7 @@ QCOM_BOARD_PLATFORMS += $(TRINKET)
 QCOM_BOARD_PLATFORMS += kona
 QCOM_BOARD_PLATFORMS += atoll
 QCOM_BOARD_PLATFORMS += lito
+QCOM_BOARD_PLATFORMS += bengal
 
 QSD8K_BOARD_PLATFORMS := qsd8k
 
@@ -269,7 +270,6 @@ FASTPOWERON := FastBoot
 #FM
 FM := qcom.fmradio
 FM += libqcomfm_jni
-FM += libfmjni
 FM += fm_helium
 FM += ftm_fm_lib
 FM += libfm-hci
@@ -825,7 +825,6 @@ PRODUCT_PACKAGES := \
     SoundRecorder \
     IM \
     FM2 \
-    FMRecord \
     SnapdragonGallery \
     SnapdragonMusic \
     VideoEditor \
