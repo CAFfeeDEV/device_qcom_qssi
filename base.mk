@@ -150,6 +150,7 @@ AUDIO_HARDWARE += audio.primary.$(MSMSTEPPE)
 AUDIO_HARDWARE += audio.primary.$(TRINKET)
 AUDIO_HARDWARE += audio.primary.kona
 AUDIO_HARDWARE += audio.primary.lito
+AUDIO_HARDWARE += audio.primary.bengal
 AUDIO_HARDWARE += audio.primary.atoll
 #
 AUDIO_POLICY := audio_policy.mpq8064
@@ -1090,6 +1091,7 @@ PRODUCT_PACKAGES_DEBUG += \
     init.qti.debug-msmnile.sh \
     init.qti.debug-kona.sh \
     init.qti.debug-lito.sh \
+    init.qti.debug-atoll.sh \
     init.qti.debug-trinket.sh
 
 PRODUCT_PACKAGES += liboemaids_system
