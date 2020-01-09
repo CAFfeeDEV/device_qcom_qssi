@@ -65,7 +65,7 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 MSM_VIDC_TARGET_LIST := msm8974 msm8610 msm8226 apq8084 msm8916 msm8994 msm8909 msm8992 msm8996 msm8952 msm8937 msm8953 msm8998 apq8098_latv sdm660 sdm845 sdm710 qcs605 msmnile $(MSMSTEPPE) $(TRINKET) kona atoll lito
 
 #List of targets that use master side content protection
-MASTER_SIDE_CP_TARGET_LIST := msm8996 msm8998 sdm660 sdm845 apq8098_latv sdm710 qcs605 msmnile $(MSMSTEPPE) $(TRINKET) kona lito atoll
+MASTER_SIDE_CP_TARGET_LIST := msm8996 msm8998 sdm660 sdm845 apq8098_latv sdm710 qcs605 msmnile $(MSMSTEPPE) $(TRINKET) kona lito atoll bengal
 
 # Below projects/packages with LOCAL_MODULEs will be used by
 # PRODUCT_PACKAGES to build LOCAL_MODULEs that are tagged with
@@ -651,11 +651,6 @@ MM_VIDEO += mm-video-encdrv-test
 MM_VIDEO += ExoplayerDemo
 MM_VIDEO += libaacwrapper
 
-# Codec2.0
-# vendor codec2 components are added in target-specific makefile
-MM_VIDEO += libmedia_codecserviceregistrant
-MM_VIDEO += libsfplugin_ccodec
-MM_VIDEO += com.android.media.swcodec
 
 #OPENCORE
 OPENCORE := libomx_aacdec_sharedlibrary
@@ -1092,7 +1087,8 @@ PRODUCT_PACKAGES_DEBUG += \
     init.qti.debug-kona.sh \
     init.qti.debug-lito.sh \
     init.qti.debug-atoll.sh \
-    init.qti.debug-trinket.sh
+    init.qti.debug-trinket.sh \
+    init.qti.debug-bengal.sh
 
 PRODUCT_PACKAGES += liboemaids_system
 PRODUCT_PACKAGES += liboemaids_vendor
@@ -1102,3 +1098,4 @@ PRODUCT_PACKAGES += libvndfwk_detect_jni.qti
 PRODUCT_PACKAGES += libqti_vndfwk_detect
 PRODUCT_PACKAGES += libvndfwk_detect_jni.qti.vendor
 PRODUCT_PACKAGES += libqti_vndfwk_detect.vendor
+PRODUCT_PACKAGES += libusb
