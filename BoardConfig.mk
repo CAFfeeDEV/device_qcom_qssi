@@ -83,7 +83,12 @@ BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
 KERN_CONF_PATH := kernel/msm-$(TARGET_KERNEL_VERSION)/arch/arm64/configs
 KERNEL_DEFCONFIG := sdm845_defconfig
 ifeq ($(wildcard $(KERN_CONF_PATH)/$(KERNEL_DEFCONFIG)),)
-KERNEL_DEFCONFIG := $(shell ls $(KERN_CONF_PATH)/vendor | grep sm8..._defconfig)
+KERNEL_DEFCONFIG := $(shell ls $(KERN_CONF_PATH)/vendor | grep ^sm8..._defconfig)
+
+ifeq ($(KERNEL_DEFCONFIG),)
+KERNEL_DEFCONFIG := $(shell ls $(KERN_CONF_PATH)/vendor | grep sdm845_defconfig)
+endif
+
 ifeq ($(KERNEL_DEFCONFIG),)
 KERNEL_DEFCONFIG := kona_defconfig
 endif
@@ -185,8 +190,14 @@ TARGET_COPY_OUT_PRODUCT := product
 BOARD_USES_PRODUCTIMAGE := true
 BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
+ifeq ($(ENABLE_AB), true)
+    BOARD_SUPER_PARTITION_SIZE := 12884901888
+else
+    BOARD_SUPER_PARTITION_SIZE := 6442450944
+endif
 BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
 BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system product
+BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 6438256640
 BOARD_EXT4_SHARE_DUP_BLOCKS := true
 ifeq ($(ENABLE_AB), true)
 AB_OTA_PARTITIONS ?= system product vbmeta_system
