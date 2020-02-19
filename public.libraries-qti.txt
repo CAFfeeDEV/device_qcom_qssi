@@ -4,3 +4,4 @@ libqvrcamera_client.qti.so
 libbinauralrenderer_wrapper.qti.so
 libhoaeffects.qti.so
 libsxrservice_client.qti.so
+libQOC.qti.so
