@@ -41,6 +41,7 @@ QCOM_BOARD_PLATFORMS += $(TRINKET)
 QCOM_BOARD_PLATFORMS += kona
 QCOM_BOARD_PLATFORMS += atoll
 QCOM_BOARD_PLATFORMS += lito
+QCOM_BOARD_PLATFORMS += lagoon
 QCOM_BOARD_PLATFORMS += bengal
 
 QSD8K_BOARD_PLATFORMS := qsd8k
@@ -1088,6 +1089,7 @@ PRODUCT_PACKAGES_DEBUG += \
     init.qti.debug-lito.sh \
     init.qti.debug-atoll.sh \
     init.qti.debug-trinket.sh \
+    init.qti.debug-lagoon.sh \
     init.qti.debug-bengal.sh
 
 PRODUCT_PACKAGES += liboemaids_system
