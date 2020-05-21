@@ -608,7 +608,6 @@ MM_AUDIO += libOmxEvrcEnc
 MM_AUDIO += libOmxMp3Dec
 MM_AUDIO += libOmxQcelp13Enc
 MM_AUDIO += libOmxAc3HwDec
-MM_AUDIO += libstagefright_soft_flacdec
 
 #MM_CORE
 MM_CORE := libmm-omxcore
@@ -892,23 +891,6 @@ PRODUCT_PACKAGES += $(CRDA)
 PRODUCT_PACKAGES += $(WLAN)
 PRODUCT_PACKAGES += $(FD_LEAK)
 
-PRODUCT_PACKAGES += android.hardware.drm@1.0-impl
-PRODUCT_PACKAGES += android.hardware.drm@1.0-service
-PRODUCT_PACKAGES += android.hardware.drm@1.1-service.widevine
-PRODUCT_PACKAGES += android.hardware.drm@1.1-service.clearkey
-
-# Don't use dynamic DRM HAL for non-go SPs
-ifneq ($(TARGET_HAS_LOW_RAM),true)
-PRODUCT_PACKAGES += android.hardware.drm@1.2-service.widevine
-PRODUCT_PACKAGES += android.hardware.drm@1.2-service.clearkey
-else
-PRODUCT_PACKAGES += android.hardware.drm@1.2-service-lazy.widevine
-PRODUCT_PACKAGES += android.hardware.drm@1.2-service-lazy.clearkey
-endif
-
-ifeq ($(strip $(OTA_FLAG_FOR_DRM)),true)
-PRODUCT_PACKAGES += move_widevine_data.sh
-endif
 PRODUCT_PACKAGES += move_wifi_data.sh
 PRODUCT_PACKAGES += librs_jni
 PRODUCT_PACKAGES += libion
