@@ -16,6 +16,8 @@ PRODUCT_BUILD_SYSTEM_EXT_IMAGE := false
 PRODUCT_BUILD_ODM_IMAGE := false
 PRODUCT_BUILD_CACHE_IMAGE := false
 PRODUCT_BUILD_USERDATA_IMAGE := false
+PRODUCT_BUILD_RAMDISK_IMAGE := false
+PRODUCT_BUILD_VBMETA_IMAGE := false
 
 #Also, there is no need to build an OTA package as this will be done later
 #when we combine this system build with the non-system images.
@@ -33,13 +35,15 @@ SYSTEMEXT_SEPARATE_PARTITION_ENABLE ?= false
 
 # Retain the earlier default behavior i.e. ota config (dynamic partition was disabled if not set explicitly), so set
 # SHIPPING_API_LEVEL to 28 if it was not set earlier (this is generally set earlier via build.sh per-target)
-SHIPPING_API_LEVEL ?= 28
+SHIPPING_API_LEVEL := 30
+
+$(call inherit-product-if-exists, vendor/qcom/defs/product-defs/system/cne_url*.mk)
 
 #### Turning BOARD_DYNAMIC_PARTITION_ENABLE flag to TRUE will enable dynamic partition/super image creation.
-# Enable Dynamic partitions only for Q new launch devices.
-ifeq ($(SHIPPING_API_LEVEL),29)
+# Enable Dynamic partitions only for Q new launch devices and beyond.
+ifeq (true,$(call math_gt_or_eq,$(SHIPPING_API_LEVEL),29))
   BOARD_DYNAMIC_PARTITION_ENABLE ?= true
-  PRODUCT_SHIPPING_API_LEVEL := 29
+  PRODUCT_SHIPPING_API_LEVEL := $(SHIPPING_API_LEVEL)
 else ifeq ($(SHIPPING_API_LEVEL),28)
   BOARD_DYNAMIC_PARTITION_ENABLE ?= false
   $(call inherit-product, build/make/target/product/product_launched_with_p.mk)
@@ -51,7 +55,6 @@ BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 BOARD_AVB_SYSTEM_ALGORITHM := SHA256_RSA2048
 BOARD_AVB_SYSTEM_ROLLBACK_INDEX := 0
 BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
-PRODUCT_BUILD_RAMDISK_IMAGE := false
 PRODUCT_BUILD_PRODUCT_IMAGE := false
 else
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
@@ -62,7 +65,6 @@ PRODUCT_BUILD_SYSTEM_EXT_IMAGE := true
 endif
 PRODUCT_BUILD_PRODUCT_IMAGE := true
 PRODUCT_BUILD_SUPER_PARTITION := false
-PRODUCT_BUILD_RAMDISK_IMAGE := true
 ifeq ($(SYSTEMEXT_SEPARATE_PARTITION_ENABLE), true)
 BOARD_AVB_VBMETA_SYSTEM := system system_ext product
 else
@@ -276,7 +278,10 @@ endif
 
 # Include mainline components and QSSI whitelist
 ifeq (true,$(call math_gt_or_eq,$(SHIPPING_API_LEVEL),29))
+  OVERRIDE_TARGET_FLATTEN_APEX := true
+  $(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
   $(call inherit-product, device/qcom/qssi/qssi_whitelist.mk)
+  PRODUCT_ARTIFACT_PATH_REQUIREMENT_IGNORE_PATHS := /system/system_ext/
   PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := true
 endif
 
