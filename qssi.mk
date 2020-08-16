@@ -16,8 +16,6 @@ PRODUCT_BUILD_SYSTEM_EXT_IMAGE := false
 PRODUCT_BUILD_ODM_IMAGE := false
 PRODUCT_BUILD_CACHE_IMAGE := false
 PRODUCT_BUILD_USERDATA_IMAGE := false
-PRODUCT_BUILD_RAMDISK_IMAGE := false
-PRODUCT_BUILD_VBMETA_IMAGE := false
 
 #Also, there is no need to build an OTA package as this will be done later
 #when we combine this system build with the non-system images.
@@ -25,9 +23,6 @@ TARGET_SKIP_OTA_PACKAGE := true
 
 # Enable AVB 2.0
 BOARD_AVB_ENABLE := true
-
-# Set SYSTEMEXT_SEPARATE_PARTITION_ENABLE if was not already set (set earlier via build.sh).
-SYSTEMEXT_SEPARATE_PARTITION_ENABLE ?= false
 
 #### Dynamic Partition Handling
 
@@ -55,21 +50,17 @@ BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 BOARD_AVB_SYSTEM_ALGORITHM := SHA256_RSA2048
 BOARD_AVB_SYSTEM_ROLLBACK_INDEX := 0
 BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
+PRODUCT_BUILD_RAMDISK_IMAGE := false
 PRODUCT_BUILD_PRODUCT_IMAGE := false
 else
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 # Disable building the SUPER partition in this build. SUPER should be built
 # after QSSI has been merged with the SoC build.
-ifeq ($(SYSTEMEXT_SEPARATE_PARTITION_ENABLE), true)
 PRODUCT_BUILD_SYSTEM_EXT_IMAGE := true
-endif
 PRODUCT_BUILD_PRODUCT_IMAGE := true
 PRODUCT_BUILD_SUPER_PARTITION := false
-ifeq ($(SYSTEMEXT_SEPARATE_PARTITION_ENABLE), true)
+PRODUCT_BUILD_RAMDISK_IMAGE := true
 BOARD_AVB_VBMETA_SYSTEM := system system_ext product
-else
-BOARD_AVB_VBMETA_SYSTEM := system product
-endif
 BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
 BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
@@ -271,15 +262,9 @@ ifeq ($(ENABLE_VIRTUAL_AB), true)
     $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
 endif
 
-ifeq ($(SYSTEMEXT_SEPARATE_PARTITION_ENABLE), false)
-PRODUCT_PACKAGES += \
-    qti_skip_mount.cfg
-endif
-
 # Include mainline components and QSSI whitelist
 ifeq (true,$(call math_gt_or_eq,$(SHIPPING_API_LEVEL),29))
   OVERRIDE_TARGET_FLATTEN_APEX := true
-  $(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
   $(call inherit-product, device/qcom/qssi/qssi_whitelist.mk)
   PRODUCT_ARTIFACT_PATH_REQUIREMENT_IGNORE_PATHS := /system/system_ext/
   PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := true
